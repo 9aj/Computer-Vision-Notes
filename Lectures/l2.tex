@@ -30,7 +30,45 @@ Where:
     N \text{ points}
 \end{align}
 
-Again, we can reconstruct these signals by adding all six frequency components:
+Again, for a 10 point sample ($N=10$), we can reconstruct these signals by adding all frequency components:
 
+\begin{align}
+    \mathcal{F}p_{6} = \sum_{u=0}^{9}\mathcal{F}p_{u}\times e^{jt\frac{2\pi}{10}u}
+\end{align}
+\newpage
 
+\subsection{2D Discrete Fourier Transform}
+The forward and inverse transforms are given:
+
+\begin{align}
+    \mathbf{\mathcal{F} P_{u,v}} = \frac{1}{N^{2}}\sum_{x=0}^{N-1}\sum_{y=0}^{N-1}\mathbf{P_{x,y}}e^{-j(\frac{2\pi}{N})(ux+vy)} \\
+    \mathbf{\mathcal{F}^{-1}} = \sum_{u=0}^{N-1}\sum_{v=0}^{N-1}\mathbf{\mathcal{F}P_{u,v}}e^{j(\frac{2\pi}{N}(ux+vy)}\\
+    \text{two dimensions of space, x and y} \\
+    \text{two dimensions of frequency, u and v} \\
+    \text{image $NxN$, pixels each being } \mathbf{P_{x,y}} 
+\end{align}
+
+\begin{quote}
+    \textbf{Shift Invariance} Upon applying a (positional) shift to an image, the magnitude and phase of the image are invariant to the shifted image. This is only true if all pixels overflow as a result of a positional shift.
+\end{quote}
+
+We can apply a few different transforms after applying the 2D Fourier transform to an image. For example rotation and filtering, mathematically we can rotate an image 90 degrees with the following transform.
+
+\begin{equation}
+    \mathbf{\mathcal{F} P_{u,v}} = \frac{1}{N}\sum_{x=0}^{N-1}\sum_{y=0}^{N-1}\mathbf{P_{x,y}}e^{-j(\frac{2\pi}{N})(ux+vy)} \\
+\end{equation}
+
+Given we have access to all frequencies for an image, we can filter out certain frequencies to create a low pass filtered image. This can then be used for different applications such as creating hybrid images.
+\\
+Some other transforms include: Fourier transform magnitude, discrete cosine transform, hartley transform.
+
+\subsubsection{Applications of 2D Fourier Transform}
+\begin{itemize}
+    \itemsep0em
+    \item Understanding and analysis
+    \item Speeding up algorithms
+    \item Invariance
+    \item Coding
+    \item Recognition of frequency (e.g. texture)
+\end{itemize}
 

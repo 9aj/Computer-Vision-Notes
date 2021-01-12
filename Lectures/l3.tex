@@ -1,0 +1,77 @@
+\section{Point Operators}
+
+\subsection{Histogram Representation}
+We can display the contrast of an image by simply plotting a histogram of the pixels with a certain brightness value, and the frequency.
+\\
+As a result, we can change the contrast by applying a brightness function:
+
+\begin{align}
+    N_{x,y} = k\times \mathbf{O}_{x,y}+l \\
+    N_{x,y}\text{ New image, pixels x and y} \\
+    \mathcal{O}_{x,y}\text{ old image} \\
+    \text{gain k} \\
+    \text{level l}
+\end{align}
+
+\subsection{Logarithmic Compression...}
+We can apply logarithmic compression and exponential expansion.
+\begin{align}
+    N_{x,y} = log(\mathcal{O}_{x,y}) \\
+    N_{x,y} = e^{(\mathcal{O}_{x,y})}
+\end{align}
+
+\subsection{Intensity Normalisation}
+
+The aim is to use all available grey levels for display. We can do this using the following process:
+\begin{itemize}
+    \itemsep0em
+    \item [1] Take the original histogram
+    \item [2] Shift the origin to zero
+    \item [3] Scale brightness to use the whole range
+\end{itemize}
+
+This can be described using the following equation:
+
+\begin{align}
+    N_{x,y} = \frac{N_{max} - N_{min}}{O_{max}-O_{min}} \times (O_{x,y} - O_{min}) + N_{min} \\
+    N_{x,y} = \frac{256}{O_{max}-O_{min}} \times (O_{x,y} - O_{min})
+\end{align}
+
+The second equation is used to avoid the need of parameter selection.
+\newpage
+\subsection{Histogram Equalisation}
+We can flatten a histogram, which is aimed for human vision to show more detail (e.g. for medical applications).
+
+\begin{table}[ht!]
+\centering
+{%
+\begin{tabular}{lr}
+ $N^{2}$ points, the sum of points per level is equal & $\sum_{l=0}^{M}\mathbf{O}(l) = \sum_{l=0}^{M}N(l)$ \\[0.5cm]
+ cumulative histogram up to level p transformed & $\sum_{l=0}^{p}\mathbf{O}(l) = \sum_{l=0}^{q}N(l)$  \\[0.5cm]
+ Number of points per level in output picture & $N(l)=\frac{N^{2}}{N_{max}-N_{min}}$ \\[0.5cm]
+ cumulative histogram of output & $\sum_{l=0}^{q}N(l) = q \times N(l)=\frac{N^{2}}{N_{max}-N_{min}}$  \\[0.5cm]
+ mapping for the output pixels at level q & $q = \frac{N_{max} - N_{min}}{N^{2}}\times \sum_{l=0}^{p} \mathbf{O}(l)$ 
+\end{tabular}%
+}
+\end{table}
+
+This is nonlinear and there are major problems with noisy images.
+
+\subsection{Thresholding}
+Thresholding selects points that exceed a chosen threshold
+
+\begin{equation}
+    N_{x,y} = \begin{cases}
+                255 & \text{if } N_{x,y}>threshold \\
+                0 & \text{otherwise}
+                \end{cases}
+\end{equation}
+
+\subsection{Summary}
+\begin{itemize}
+    \itemsep0em
+    \item [1] point operators are largely about image display
+    \item [2] histogram manipulation
+    \item [3] thresholding is used a lot
+    \item [4] intensity normalisation is used for medical display
+\end{itemize}
