@@ -1,0 +1,36 @@
+\section{Image Sampling}
+
+\subsection{Sampling Signals}
+Given a continuos signal, an image is well sampled if from the sample points alone, an accurate representation of the original signal can be created. Bad sampling would describe a different signal upon creation.
+\\
+If we were to oversample, lets use the example of a rotating wheel, the wheel would appear to be rotating slowly. If the sampling rate was not high enough, the wheel would be appear to be moving in the opposite direction.
+\\
+Consider the frequency domain, the spectra repeat, if the sampling rate is correct, the spectra will just touch. We can deduce from this that:
+\begin{equation}
+    Sample_{min} = 2 \times f_{max}
+\end{equation}
+This follows \textit{Nyquists sampling theorem}, which states:
+\begin{quote}
+    In order to be able to reconstruct a singal from its samples, we must sample at minimum twice the maximum frequency in the original sample.
+\end{quote}
+A simple example of this would be, speech averages at $6kHz$, we sample at $12kHz$. If we compare this to something like \textit{.wav} audio files, they are often sampled at 24kHz upon a spectral analysis. In image terms; two pixels for every pixel of interest.
+
+\subsection{1D Discrete Fourier Transform}
+Discrete Fourier calculates frequency from data points.
+
+\begin{align}
+    \mathcal{F}p(\omega) = \int_{-\infty}^{\infty}p(t)e^{-jwt}dt \\
+    \mathcal{F}p_{u} =\frac{1}{N}\sum_{i=0}^{N-1}p_{i}e^{-j\frac{2\pi}{N}iu} \\
+\end{align}
+
+Where:
+\begin{align}
+    \text{Sampled Frequency: } \mathcal{F}p_{u} \\
+    \text{Sampled Points: } p_{i}\\
+    N \text{ points}
+\end{align}
+
+Again, we can reconstruct these signals by adding all six frequency components:
+
+
+
