@@ -1,0 +1,80 @@
+\section{Machine Learning for Pattern Recognition}
+
+\subsection{Machine Learning Process}
+The process for a computer vision application takes the following form:
+
+\begin{itemize}
+    \item Image Input
+    \item Feature Extraction - to Feature Vectors
+    \item Machine Learning - uses Feature Vectors
+    \item Classification
+\end{itemize}
+
+\subsection{Feature Vectors}
+A mathematical vector, consisting of real numbers, with a fixed size. The dimensionality of the vector is the number of elements. \\
+
+\noindent The featurevector represents a point in a feature space, or a direction in the feature space.
+\\
+
+\noindent The dimensionality of a featurespace, is the dimensionality of every subvector.
+\\
+
+\noindent \textit{Vectors of differing dimensionality can't exist in the same featurespace.}
+
+\subsubsection{Distances in \textit{featurespace}}
+Feature extractors are defined so that they produce vectors that are close together for similar inputs. The closeness of two vectors can be computed by calculating the distance between the vectors.
+\\
+
+\noindent \textbf{L2 Distance} is the most intuitive distance, the straight line distance between two points. This is computed via an extension of Pythagoras theorem.
+
+\begin{align}
+    D_{n}(p,q) = \sqrt{\sum_{i=1}^{n}(p_{i}-q_{i})^{2}}\\
+    D_{2}(p,q) = \sqrt{\sum_{i=1}^{2}(p_{i}-q_{i})^{2}} = \sqrt{(p-q)(p-q)}
+\end{align}
+
+\\
+\noindent \textbf{L1 Distance} (Manhattan/Taxicab) is computed along paths parallel to the axes of the space.
+
+\begin{align}
+    D_{1}(p,q)=\sum_{i=1}^{n}=||p-q||_{1}
+\end{align}
+\\
+
+\noindent \textbf{Cosine Similarity} measures the cosine of the angle between two vectors. It is not a distance.
+
+\begin{align}
+    \cos{\theta}= \frac{pq}{||p||||q||} \\
+    \cos{\theta}= \frac{\sum_{i=1}^{n}p_{i}q_{i}}{\sqrt{\sum_{i=1}^{n}p_{i}^{2}}\sqrt{\sum_{i=1}^{n}}q_{i}^{2}}
+\end{align}
+
+\subsubsection{Featurevector Choices}
+It is important to choose features which allow to distinguish objects or classes of interest. Keeping the number of features is also important, as ML becomes more difficult with increased dimensionality of the feature space. (Note dimensionality reduction)
+
+\subsection{Classification}
+Classification is the process of assigning a class label to an object. A supervised machined learning algorithm uses a set of prelabelled training data to learn how to assign class labels to vectors.
+
+\subsubsection{Linear Classifiers}
+Linear classifiers try to divide a feature space using a linear hyperplane which separates two classes. The aim is to find a suitable hyperplane, and do this with minimum classification error.
+\\
+\noindent Given an image to classify, we just need to check which side of the hyperplane it is on.
+
+\subsubsection{Non-linear Binary Classifiers}
+Linear classifiers work when the data is linearly separable. We can use non linear binary classifiers such as kernel support vector machines to learn non-linear decision boundaries. We lose generality of the classifier if we overfit using a polynomial of too high degree.
+
+\subsubsection{KNN}
+We assign a class to an unknown point, based on the majority class of the closest K neighbours in a feature space.
+
+\subsection{Clustering}
+We aim to group data without any prior knowledge of what each group contains. We group items by the similarity of each feature vector. Some clustering operations can create overlapping groups, however for this purpose we are only looking at disjointed clustering methods such as K-means clustering.
+
+\subsubsection{K-Means Clustering}
+K-means is a featurespace clustering algorithm for grouping data into K distinct groups where each group is represented by its \textit{centroid}.
+
+\begin{itemize}
+    \item [\textbf{1}] The number of groups, K is selected
+    \item [\textbf{2}] K initial cluster centres are chosen.
+    \item Each point is assigned to its closest centroid
+    \item The centroid is recomputed as the mean of all the points assigned to it. If the centroid has no points assigned to it, we reinitialise the centroid to a new point.
+    \item [\textbf{3}] We cluster by assigning all points to their nearest centroids
+\end{itemize}
+
