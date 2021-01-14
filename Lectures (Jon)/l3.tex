@@ -68,7 +68,7 @@ For a given set of $n$ dimensional data, the first principle axis  is the vector
 A vector perpendicular to the first major axis. The following principal axes are of the greatest variance orthogonal to both the first and second principal axi\dots
 
 \subsection{Eigenvectors and Eigenvalues}
-There are at mot n eigenvector-eigenvalue pairs. If \textbf{A} is symmetric, then the set of vectors is orthogonal.
+There are at most n eigenvector-eigenvalue pairs. If \textbf{A} is symmetric, then the set of vectors is orthogonal.
 \begin{equation}
     \textbf{A}v = \lambda v
 \end{equation}
@@ -139,3 +139,12 @@ To summarise the maths:
 \end{quote}
 
 \subsubsection{PCA Algorithm}
+
+\begin{itemize}
+    \item [1] Mean centre the data vectors
+    \item [2] Form the vectors into a matrix Z, such that each row corresponds to a vector
+    \item [3] Perform eigendecomposition, given that the covariance matrix is symmetric we get $Q\land Q^{T}=Z^{T}Z$.
+    \item [4] Sort the columns of \textbf{Q} and corresponding diagonal values of $\land$ so that the eigenvalues are decreasing.
+    \item [5] Reduce dimensions by selecting L largest eigenvectors of \textbf{Q} to create \textbf{$Q_{l}$}.
+    \item [6] Project the original vectors into a lower dimensional space $T_{L} = ZQ_{l}$
+\end{itemize}
