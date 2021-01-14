@@ -1,0 +1,141 @@
+\section{Variance and Covariance}
+
+\subsection{Random Variables and Expected Values}
+
+Variance and covariance are usually described in terms of random variables and expected values.
+
+\begin{quote}
+    A random variable is a variable that takes on different values due to a probability
+\end{quote}
+
+The set of sample values from a single dimension of a feature space can be considered to be a random variable.
+
+\begin{quote}
+    The expected value $E(X)$ is the most likely value a random variable will take.
+\end{quote}
+
+\textbf{We assume for the purpose of this course} that the values an element of a feature can take, are all equally likely. \\
+
+\noindent \textbf{For the exam: $E(X)=mean$}
+
+\subsection{Variance}
+Variance, denoted by $(\sigma^{2})$ is the mean squared difference from the mean $(\mu)$. Essentially, \textit{how spread out the data is from the mean}
+
+\begin{equation}
+    \sigma^{2}(x) = \frac{1}{n}\sum_{i=1}^{n}(x_{i}-\mu)^{2}
+\end{equation}
+
+\begin{align}
+    (x_{i}-\mu)^{2} &\text{ Squared difference for a single point and the mean} \\
+    \sum_{i=1}^{n}(x_{i}-\mu)^{2} &\text{ Calculate squared difference for every discrete point} \\
+    \frac{1}{n}\sum_{i=1}^{n}(x_{i}-\mu)^{2} &\text{ Divide by total number of points to find variance}
+\end{align}
+
+\subsection{Covariance}
+Covariance, denoted by $(\sigma(x,y)$ is the measure of how two variables change \textbf{together}.
+
+\begin{equation}
+    \sigma(x,y) = \frac{1}{n}\sum_{i=1}^{n}(x-\mu_{x})(y-\mu_{y})
+\end{equation}
+
+The variance is equal to the covariance when the two variables are the same. A covariance value of $0$ means that the variables are uncorrelated.
+
+\subsubsection{Covariance Matrix}
+
+A covariance matrix encodes the formula for a given n dimensional dataset through every combination of pairs.
+
+\begin{equation}
+    \begin{bmatrix}
+    \sigma(X_{1}, X_{1}) & \sigma(X_{1}, X_{2}) & \dots & \sigma(X_{1}, X_{n}) \\ 
+    \sigma(X_{2}, X_{1}) & \sigma(X_{2}, X_{2}) & \dots & \sigma(X_{2}, X_{n}) \\ 
+    \dots & \dots & \dots & \dots \\
+    \sigma(X_{n}, X_{1}) & \sigma(X_{n}, X_{2}) & \dots & \sigma(X_{n}, X_{n})
+    \end{bmatrix}
+\end{equation}
+
+A covariance matrix is \textbf{square} and \textbf{symmetric}.
+
+\subsection{Mean Centring}
+We compute the mean across each dimension independently of a set of vectors, then subtracting the mean vector from every vector in the set. All vectors are translated so that the average position is the origin.
+
+\subsection{Principal Axes of Variation}
+A basis is a set of n linearly independent vectors in an n dimensional space. The vectors are infinite, orthogonal (dot product = 0), and they form a coordinate system.
+
+\subsubsection{The first principal axis}
+For a given set of $n$ dimensional data, the first principle axis  is the vector that describes the direction of the greatest variance.
+
+\subsubsection{The second, third.. principal axis}
+A vector perpendicular to the first major axis. The following principal axes are of the greatest variance orthogonal to both the first and second principal axi\dots
+
+\subsection{Eigenvectors and Eigenvalues}
+There are at mot n eigenvector-eigenvalue pairs. If \textbf{A} is symmetric, then the set of vectors is orthogonal.
+\begin{equation}
+    \textbf{A}v = \lambda v
+\end{equation}
+
+\begin{itemize}
+    \item \textbf{A} - NxN square matrix
+    \item $v$ - n dimensional vector (eigenvector)
+    \item $\lambda$ - a scalar value (eigenvalue)
+\end{itemize}
+
+If \textbf{A} is a covariance matrix, then the eigenvectors are the principal axes. 
+\\
+\noindent $\lambda$ is proportional to $\sigma - variance$ of the data along each eigenvector.
+
+\begin{quote}
+    The eigenvector corresponding to the \textbf{largest} eigenvalue is the first principle component axis.
+\end{quote}
+
+\subsubsection{Finding $\lambda$ and $v$}
+For larger matrices, numerical solutions t the eigendecomposition must be sought. Eigenvectors are the columns of \textbf{Q}.
+
+\begin{align}
+    A = Q \land Q^{-1} \\
+    \land_{ii} = \lambda_{ii}
+\end{align}
+
+If \textbf{A} is real symmetric (i.e. a covariance matrix) then 
+
+\begin{align}
+    Q^{-1} = Q^{T} \\
+    A = Q \land Q^{T}
+\end{align}
+
+Gives you the principal axes and their relative magnitudes.
+
+\subsection{Linear Transform}
+A linear transform \textbf{W} projects data from one space into another:
+
+\begin{equation}
+    T = ZW
+\end{equation}
+The original data is stored in the rows of Z.
+
+T can have fewer dimensions than Z, if W is a dimensionality reduction transform.
+
+\subsubsection{Inverse Linear Transform}
+
+\begin{equation}
+    Z = TW^{-1}
+\end{equation}
+
+The effects of a linear transform can be reversed if \textbf{W} is invertible.
+
+\subsection{PCA}
+PCA is an Orthogonal Linear Transform that maps data from its original space to a space defined by the principal axes.
+\begin{itemize}
+    \item The transform matrix \textbf{W} is just the eigenvector matrix \textbf{Q} from the eigendecomposition of the covariance matrix of the data.
+    \item In addition we can reduce the dimensions by removing low ranking eigenvectors (by eigenvalue)
+\end{itemize}
+
+To summarise the maths:
+\begin{align}
+    W = Q \land Q^{T}
+\end{align}
+
+\begin{quote}
+    \textit{The transform matrix \textbf{W} is just the eigenvector matrix \textbf{Q} from the eigendecomposition of the covariance matrix of the data.}
+\end{quote}
+
+\subsubsection{PCA Algorithm}
