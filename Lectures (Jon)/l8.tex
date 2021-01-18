@@ -1,0 +1,260 @@
+\section{Consistent Matching}
+
+\subsection{Eliminating Matching Mismatches}
+
+Even advanced features can be prone to being mismatched. This is because there is always a tradeoff in feature distinctiveness, if its too distinctive then it will not match subtle variations due to noise or other conditions \textbf{(think constraints)}, if its not distinctive enough, it will match everything.
+
+\subsection{Point Transforms}
+
+We are interested in \textbf{point} transforms that take the following form:
+
+\begin{align}
+    \textbf{x' = Tx} \\
+    \text{x' - Transformed Coordinate}\\
+    \text{T - Transform Matrix} \\
+    \text{x - Original Coordinate} \\
+\end{align}
+
+\subsection{The Affine Transform}
+
+\noindent We also have the \textbf{Affine Transform}, which is defined as:
+
+\begin{align}
+    \textbf{x' = Ax + b} \\
+    \begin{bmatrix} x' \\ y' \end{bmatrix} = \begin{bmatrix}
+    a_{11} & a_{12} \\ a_{22} & a_{22}
+    \end{bmatrix} \begin{bmatrix}
+    x \\ y
+    \end{bmatrix} + \begin{bmatrix}
+    b_{1} \\ b_{2}
+    \end{bmatrix}
+\end{align}
+
+
+\noindent Commonly, the affine transform is written in the following form, in which another dimension is added to each vector:
+
+\begin{equation}
+    \begin{bmatrix}
+    x' \\ y' \\ 1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    a_{11} & a_{12} & b_{1} \\
+    a_{21} & a_{22} & b_{2} \\
+    0 & 0 & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+    x \\ y \\ 1
+    \end{bmatrix}
+\end{equation}
+
+\noindent as a result we have the following transforms:
+
+\subsubsection{Translation}
+
+\begin{equation}
+    \begin{bmatrix}
+    1 & 0 & t_{x} \\
+    0 & 1 & t_{y} \\
+    0 & 0 & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+    x \\ y \\ 1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    x+ t_{x} \\
+    y+ t_{y} \\
+    1
+    \end{bmatrix}
+\end{equation}
+
+\subsubsection{Translation and Rotation}
+
+\begin{equation}
+    \begin{bmatrix}
+    cos(\theta) & -sin(\theta) & t_{x} \\
+    sin(\theta) & cos(\theta) & t_{y} \\
+    0 & 0 & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+    x \\ y \\ 1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    x' \\
+    y' \\
+    1
+    \end{bmatrix}
+\end{equation}
+
+\subsubsection{Scaling}
+\begin{equation}
+    \begin{bmatrix}
+    a & 0 & 0 \\
+    0 & a & 0 \\
+    0 & 0 & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+    x \\ y \\ 1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    x' \\
+    y' \\
+    1
+    \end{bmatrix}
+\end{equation}
+
+\subsubsection{Aspect Ratio}
+
+\begin{equation}
+    \begin{bmatrix}
+        a & 0 & 0 \\
+        0 & \frac{1}{a} & 0 \\
+        0 & 0 & 1
+\end{bmatrix}
+    \begin{bmatrix}
+    x \\ y \\ 1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    x' \\
+    y' \\
+    1
+    \end{bmatrix}
+\end{equation}
+
+\subsubsection{Shear}
+
+\begin{equation}
+    \begin{bmatrix}
+        1 & a & 0 \\
+        b & 1 & 0 \\
+        0 & 0 & 1
+\end{bmatrix}
+    \begin{bmatrix}
+    x \\ y \\ 1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    x' \\
+    y' \\
+    1
+    \end{bmatrix}
+\end{equation}
+
+\subsubsection{Degrees of Freedom Translations}
+
+From the above translations, we have two measures of 'Degrees of Freedom'
+
+\begin{align*}
+    \text{(Affine) 6DoF }&= translation+rotation+scale+ar+shear \\
+    \text{(Similarity) 4DoF } &= translation+rotation+scale
+\end{align*}
+
+\noindent We can add further degrees of freedom, by normalising by \textit{w} so that the transformed vector is $[.,.,1]$
+
+\begin{equation}
+    \begin{bmatrix}
+        a & b & c \\
+        d & e & f \\
+        g & h & 1
+\end{bmatrix}
+    \begin{bmatrix}
+    x \\ y \\ 1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    u \\
+    v \\
+    w
+    \end{bmatrix}
+\end{equation}
+
+\noindent This leads to:
+
+\begin{align*}
+    x' &= \frac{u}{w} \\
+    y' &= \frac{v}{w}
+\end{align*}
+
+\noindent With the following deductions above, we can then achieve the Planar Homography (Projective Transformation)
+
+\begin{equation}
+    \begin{bmatrix}
+        a & b & c \\
+        d & e & f \\
+        g & h & 1
+\end{bmatrix}
+    \begin{bmatrix}
+    x \\ y \\ 1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    wx' \\
+    wy' \\
+    w
+    \end{bmatrix}
+\end{equation}
+
+\subsection{Estimate Transform Matrices}
+
+We can estimate transform matrices from a set of point matches by solving a set of simultaneous equations. 
+
+\begin{itemize}
+    \itemsep0em
+    \item We need 4 point matches to solve a homography
+    \item We need 3 to solve an affine transform
+\end{itemize}
+
+\noindent It is important to note that in the presence of noise, and with potentially more matches than required, we are solving an overdetermined system. We need to seek the minimum error or least-squares solution.
+
+\\
+
+\noindent We use the SSE formulae as follows:
+
+\begin{equation}
+    SSE = \sum (residual)^2
+\end{equation}
+
+\noindent Where residual is the residual distance from a observed point and a predicted point. (Distance to line of best fit)
+
+\noindent With two images, we take the reference image and project the points of interest on to the second image, we then calculate the SSE, with the euclidean (L2) distance from predicted to observed.
+
+\subsection{Robust Estimation}
+
+The problem of learning a model in the presence of inliers and outliers comes under an area of mathematics called robust estimation or robust model fitting, a simple example is the RANSAC (Random Sample Consensus) algorithm:
+
+\begin{itemize}
+    \item [\textbf{1}] Select M data items at random.
+    \item [\textbf{2}] Estimate model T
+    \item [\textbf{3}] Find how many of the N data items fit T within a tolerance tol, call this K. Points within the bounds of tol are inliers, outliers otherwise.
+    \item [\textbf{4}] If K is large enough, accept T, or compute least squares
+    \item [\textbf{5}] Repeat for $N_{it}$ iterations, if no good fit, fail.
+\end{itemize}
+
+\subsection{Problems with Direct Local Feature Matching}
+
+Local feature matching is very slow. A typical low resolution image $(800x600)$ might have approximately 2000 difference of gaussian interest points/SIFT descriptors. Each SIFT descriptor is 128 dimensions. If we want to match a query image against a database of images, the distance between every query feature and every other feature needs to be calculated, \textbf{for each image!}.
+
+\\
+
+\noindent We can optimise this using: Efficient Nearest Neighbour Search ((how quickly can we find a nearest neighbour to a query point in a high dimensional space:
+
+\begin{itemize}
+    \itemsep0em
+    \item Index the points in some kind of tree structure
+    \item Hash the points - create hash codes for vectors such that similar vectors have similar hash codes
+    \item Quantise the space
+\end{itemize}
+
+\noindent We can also use a K-D binary tree structure that partitions the space along axis-alligned hyperplanes. 
+
+\begin{itemize}
+    \itemsep0em
+    \item Doesnt scale well
+    \item End up needing to search most of tree
+    \item Approximate versions do exists that are faster
+    
+\end{itemize}

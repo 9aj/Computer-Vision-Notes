@@ -1,0 +1,51 @@
+\section{Image Classification and Auto-annotation}
+
+This lecture is largely aimed as supplementary material for the final coursework. Only examinable contents are provided.
+
+\subsection{Multilabel Classification}
+
+Where we have a cat and a dog, as labels, in the context of images this is often called \textbf{Automatic Annotation}.
+
+\subsection{Dense SIFT}
+Rather than extracting SIFT features at difference of Gaussian interest points, we could extract them across a dense grid. This gives more coverage of the entire image.
+
+\subsection{Pyramid Dense SIFT}
+For even better performance, we can use the scaled Gaussian pyramid. The sampling region is a fixed size, so at higher scales you sample more content.
+
+\subsection{Developing and Benchmarking a BoVW scene classifier}
+
+Again, this appears to be relevant only for the coursework but is included as a guide.
+
+\begin{itemize}
+    \itemsep0em
+    \item [\textbf{1}] \textbf{Evaluation Dataset}
+    \item []We split the dataset into testing and training data
+    \item []Only training data is used to train the annotator
+    \item [\textbf{2}] \textbf{Building the BoVW}
+    \item []Extract raw image features from training images
+    \item []Learn a codebook from these features
+    \item []Use K Means from a sample
+    \item []Apply vector quantisation to assign histograms from each image.
+    \item [\textbf{3}] \textbf{Training Classifiers}
+    \item []Classifier can be trained using the histograms
+    \item []Train on a subset of training data and create validation set with remaining data. This is for the purpose of parameter optimisation.
+    \item [\textbf{4}] \textbf{Classifying the Test Set}
+    \item []Use classifiers to find the most likely class
+    \item [\textbf{5}] \textbf{Calculate different metrics for performance evaluation}
+    \item []Average precision
+    \item []Recall
+    \item []F1 macro/micro score
+\end{itemize}
+
+\hline
+\vfill
+
+\begin{quote}
+    \centering
+    The End.
+    7600 Words.
+    
+    Produced for COMP3204 Computer Vision
+    
+    \textit{Alex Miles / 9aj}
+\end{quote}

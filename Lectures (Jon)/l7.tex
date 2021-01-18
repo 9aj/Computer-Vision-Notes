@@ -1,0 +1,121 @@
+\section{Local Features and Matching}
+
+\subsection{Local Features}
+
+We extract multiple features from points of interest detected in the feature extractor, giving the result of multiple featurevectors. We extract local features for a variety of reasons, some reasons for this are:
+
+\begin{itemize}
+    \itemsep0em
+    \item Image Alignment
+    \item Camera pose estimation
+    \item Camera calibration
+    \item 3D reconstruction
+    \item Motion tracking
+    \item Object recognition
+    \item Indexing and database retrieval
+    \item Robot navigation
+\end{itemize}
+
+\subsubsection{Example: Building a Panorama}
+
+Panoramas consist of multiple images. These images are matched by detecting feature points in both images, and finding the corresponding pairs prior to using these pairs in order to allign the images. We then have the following problems:
+
+\begin{itemize}
+    \itemsep0em
+    \item We detect the same points independently in both image - there is no chance of matching as there is no repeatability
+    \item For each point we need to correctly recognise the corresponding one. We need an invariant, robust and distinctive descirptor.
+\end{itemize}
+
+\subsection{Matching Problems}
+
+In stereo vision, for 3D reconstruction, there are two concepts relating to matching; narrow-baseline stereo, wide-baseline stereo.
+
+\subsection{Robust Local Description}
+
+\subsubection{Descriptor Requirements}
+This is dependent on task, for narrow baseline stereo:
+
+\begin{itemize}
+    \itemsep0em
+    \item Robustness to rotation and lighting is not important.
+    \item Descriptiveness can be reduced as search is over a smaller area.
+\end{itemize}
+
+\noindent For wide-baseline stereo
+
+\begin{itemize}
+    \itemsep0em
+    \item Need to be robust to intensity change, invariant to rotation
+    \item Highly descriptive to avoid mismatches, but not overly distinctive
+    \item Robust to small localisation errors of the interest point.
+\end{itemize}
+
+\subsubsection{Problems with wider baselines}
+\begin{itemize}
+    \itemsep0em
+    \item Not robust to rotation
+    \item Sensitive to localisation of interest point
+    \item Cant assume search areas, need to consider all the interet points in the second image, which can lead to mismatching.
+\end{itemize}
+
+\subsubsection{Detection Methods}
+
+We can use either local histograms or Harris Stephens corner detector. The problems with histograms are as follows:
+
+\begin{itemize}
+    \itemsep0em
+    \item Not necessarily very distinctive
+    \item Many interest points likely to have a similar distribution of grey-values
+    \item Not rotation invariant if the sampling window is square or rectangular.
+    \item Not invariant to illumination changes
+    \item Sensitive to interest point localisation
+\end{itemize}
+
+\subsubsection{Overcoming Localisation Sensitivity}
+
+We ideally allow a point of interest to move a few pixels in any direction without changing the descriptor. We can apply a weighting so that pixels near the edge of the sampling patch have less effect, and those nearer the interest point have more.
+
+\subsection{Local Gradient Histograms}
+
+We can apply convolution with Sobel to achieve the partial derivatives of an image. It is then easy to compute the gradient orientation and magnitude:
+
+\begin{align}
+    \theta = \arctan \left(\frac{\delta f}{\delta y}, \frac{\delta f}{\delta x} \right) \\
+    m = \sqrt{(\frac{\delta f}{\delta y})^2 + (\frac{\delta f}{\delta x})^2}
+\end{align}
+
+\noindent We can then build a gradient histogram, which encodes the magnitude and direction for each pixel in the sampling patch. This is because gradient magnitudes and directions are invariant to brightniess change. It is a more \textit{distinctive} histogram.
+
+\subsubsection{Building Gradient Histograms}
+
+\begin{itemize}
+    \itemsep0em
+    \item We quantise the directions into a number of bins, usually 8 separate bins.
+    \item For each pixel in the sampling patch, accumulate the gradient magnitude of that pixel and place in the respective orientation bin.
+    \item We can make these histograms rotation invariant by finding the dominant orientation and cyclically shifting the histogram so the dominant orientation is in the first bin.
+\end{itemize}
+
+\subsection{SIFT Feature}
+
+The SIFT (Scale Invariant Feature Transform) feature is widely used. It builds on the idea of a local gradient histogram by incorporating \textit{spatial binning}. This creates multiple gradient histograms about the interest point and appends them all together into a longer feature. We append a spatial $4x4$ grid of histograms with 8 orientations.
+\begin{itemize}
+    \itemsep0em
+    \item This leads to a 128-dimensional feature which is highly discriminative and robust.
+\end{itemize}
+
+We can describe the SIFT process as follows:
+
+\begin{itemize}
+    \itemsep0em
+    \item [\textbf{1}] We have an interest point. We take a sampling patch, where the size is proportional to the scale of the interest point.
+    \item [\textbf{2}] Gaussian centred on the interest point, weights the pixel contributions lower towards the edges. \textbf{Corners of the sampling square have zero weight. The sampling region is circular.}
+    \item [\textbf{3}] Spatial bins, within the sampled window. Gradient histograms are created for $4x4$ spatial bins, taking into account the Gaussian weighting. Orientations measured relative to the overall dominant orientation of the patch.
+\end{itemize}
+
+\subsubsection{Matching SIFT Features}
+
+\textbf{Euclidean Matching (L2 Distance)}  Is the simplest method to match SIFT features. We take the most similar feature in the second image to the feature in the reference image. We can improve this using thresholding, however it isnt the best matching method.
+
+\subsubsection{Improving Matching Performance}
+
+\textbf{A better solution is to take each feature from the first image, and find the two closest features in the second image}. We can form a match if the ratio of distances between the ref and sec image is below a threshold.

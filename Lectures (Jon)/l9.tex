@@ -1,0 +1,146 @@
+\section{Image Search and Bags of Visual Words}
+
+\subsection{Text Information Retrieval}
+
+A bag is an unordered data structure similar to a set, however it allows repeated elements to be inserted multiple times. \\
+
+\noindent In the context of text processing, the basic process is as follows.
+
+\begin{itemize}
+    \itemsep0em
+    \item [\textbf{1}] Text input
+    \item [\textbf{2}] Tokenisation
+    \item [\textbf{3}] Stop-word removal
+    \item [\textbf{4}] Stemming or Lemmatisation
+    \item [\textbf{5}] Bag of Words
+    \item [\textbf{6}] Count Vector
+\end{itemize}
+
+\subsubsection{The Vector-Space Model}
+
+This model is conceptually simple:
+
+\begin{itemize}
+    \itemsep0em
+    \item Model each document by a vector
+    \item Model each query by a vector
+    \item Assumption: documents that are close together in space are similar in meaning.
+    \item Use similarity measures to rank each document to a query in terms of descreasing similarity.
+\end{itemize}
+
+\noindent Lets say we have two variables, 'Diet', and 'Star'. We can calculate the cosine similarity of features in this dimension with the following formulae:
+
+\begin{equation}
+    cos(\theta) = \frac{p.q}{||p||\, ||q||} = \frac{\sum_{i=1}^{n}p_{i}q_{i}}{ \sqrt{ \sum_{i=1}^{n}p_{i}^2 } \sqrt{ \sum_{i=1}^{n}p_{i}q_{i}^2}}
+\end{equation}
+
+\begin{itemize}
+    \itemsep0em
+    \item We can precompute the sum of the features squared to save time!
+    \item If p and q are both sparse, we spend a lot of time multiplying by zero!
+\end{itemize}
+
+
+\subsubsection{Bag of Words Vectors}
+
+The lexicon (vocabulary) is the set of all preprocessed words across all documents known to the system. We can create vectors for each document, with as many dimensions as there are words in the lexicon. Each word in the documents bag of words contributes to a count to the corresponding element of the vector for that word.
+
+\\
+
+\noindent \textbf{Vectors have a very high number of dimensions, but are very sparse}
+
+\subsection{Inverted Indexes}
+
+Given the bag of visual words, we can create a table for each word, and reference the document in which it appears, and the frequency.
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{lr}
+Diet & {[}doc1:2{]} 
+\end{tabular}
+\caption{Map of Words to Lists of Postings}
+\end{table}
+
+\noindent We get postings, a pair formed by a document ID and the number of times a word appears in that document. We can then for each word in a query,  look up the relevant posting list and accumulate similarities using \textit{cosine similarity}.
+\\
+
+\noindent Given we have the the postings, and we are querying 'Movie Star'
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{lr}
+Movie & {[}doc2:10{]} \\
+Star & {[}doc1:13, doc2:4{]}
+\end{tabular}
+\end{table}
+
+\noindent We get the following accumulation table:
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{lr}
+doc2 & $\frac{(10\times 1 + 4\times 1)}{14...}$
+\end{tabular}
+\end{table}
+
+\subsection{Weighting Vectors}
+
+The frequency of occurrence of a term in a document represents the importance of the word in the document. We can use the following weighting schemes:
+
+\begin{itemize}
+    \itemsep0em
+    \item Binary Weights - 1 or 0
+    \item Raw Frequency - Count Vector
+    \item TF-IDF - Gives an importance score based on metric
+\end{itemize}
+
+\subsection{Vector Quantisation}
+Vector quantisation is a lossy data compression technique. We can use a technique like K-Means clustering to learn a fixed size set of representative vectors. The set of representation vectors, i.e. where the features lie, is called a \textbf{codebook}. The representative vectors are the mean vector in each cluster (centroids).
+
+\subsection{Visual Words}
+
+\subsubsection{SIFT Visual Words}
+
+We can vector quantise SIFT descriptors. Each descriptor is replaced by a representative vector known as a visual word. The visual word describes a small image patch with a certain pattern of pixels. The codebook is the visual equivalent of a vocabulary.
+
+\subsubsection{Bags of Visual Words}
+
+Once we've quantised the local features into visual words, they can be 'bagged'. This is a \textbf{Bag of Visual Words (BoVW)}. We can build a histogram, based on the codebook and visual word occurences. This is very useful for machine learning.
+
+\subsubsection{Codebook Size}
+
+There is one key parameter in building visual word representations - \textbf{vocabulary size}.
+
+\begin{itemize}
+    \itemsep0em 
+    \item [1] Too small, and all vectors look the same.
+    \item [] Not distinctive.
+    \item [2] Too big, visual words may never appear
+    \item [] Too distinctive.
+\end{itemize}
+
+\noindent Inverted index only gives a performance gain if the vectors are sparse. Visual words also need to be sufficiently distinctive to minimise mismatching. This implies a very big codebook, modern research systems use 1 million visual words or more for SIFT features.
+
+\subsubsection{BoVW Retrieval}
+
+Everything we have for text retrieval can be applied directly to images, e.g.
+
+\begin{itemize}
+    \itemsep0em
+    \item Vector Space Model
+    \item Cosine Similarity
+    \item Weighting Schemes
+    \item Inverted Index
+\end{itemize}
+
+\noindent The overall process for building a BoVW retrieval system is as follows:
+
+\begin{itemize}
+    \itemsep0em
+    \item Collect the corpus of images that are to be indexed and made searchable
+    \item Extract local features from each image
+    \item Learn a large codebook from a sample of the features
+    \item Vector quantise the features, and build BoVw representations for each image
+    \item Construct an inverted index with the BoVW representations.
+\end{itemize}
+

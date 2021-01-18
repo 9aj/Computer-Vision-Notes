@@ -1,0 +1,145 @@
+\section{Local Interest Points}
+
+An example of a good local interest point includes the following characteristics:
+
+\begin{itemize}
+    \itemsep0em
+    \item Invariance to brightness change (local change and global change)
+    \item Sufficient texture variation in the local neighbourhood
+    \item Incariance to changes between the angle/position of the scene to the camera.
+\end{itemize}
+
+\subsection{Finding Local Interest Points}
+
+There are two main methods of detecting local interest points:
+
+\begin{itemize}
+    \itemsep0em
+    \item Corner Detection - Harris and Stephens
+    \item Blob Detection - Difference of Gaussian Extrema
+\end{itemize}
+
+\subsubsection{Harris and Stephens Corner Detector}
+We look through a small window (frame) of the image pixels, and search for corners. If we shift that window by a small amount, a large change in intensity should be present.
+
+\\
+
+\noindent We measure the \textit{weighted average change in intensity between a window and a shifted version by $(\delta x, \delta y)$ of that window}
+
+\begin{equation}
+    E(x,y) = \sum_{W} f(x_{i},y_{i}) [ I(x_{i},y_{i}) - I(x_{i} + \delta x,y_{i} + \delta y) ]^2
+\end{equation}
+
+\noindent Lets use the taylor expansion, with the first order terms:
+
+\begin{equation}
+    I(x_{i} + \delta x,y_{i} + \delta y) \approx I(x_{i},y_{i}) + [ I_{x}(x_{i},y_{i}) \;\;\: I_{y}(x_{i},y_{i})  ] \begin{bmatrix} \delta x \\ \delta y \end{bmatrix}
+\end{equation}
+
+\noindent We can substitute this into the original equation, and simplify:
+
+\begin{align*}
+    E(x,y) &= \sum_{W}[ I(x_{i},y_{i}) - I(x_{i} + \delta x,y_{i} + \delta y) ]^2 \\
+    &= \sum_{W} (I(x_{i}, y_{i}) - I(x_{i},y_{i}) - [ I_{x}(x_{i},y_{i}) \;\;\: I_{y}(x_{i},y_{i})  ] \begin{bmatrix} \delta x \\ \delta y \end{bmatrix})^2 \\
+    &= \sum_{W}([ I_{x}(x_{i},y_{i}) \;\;\: I_{y}(x_{i},y_{i})  ] \begin{bmatrix} \delta x \\ \delta y \end{bmatrix})^2 \\
+    &= [\delta x \;\;\; \delta y] \begin{bmatrix} \sum_{w} (I_{x}(x_{i},y_{i}))^2 & \sum_{w} I_{x}(x_{i},y_{i})(I_{y}(x_{i},y_{i}) \\[0.2cm] \sum_{w} I_{x}(x_{i},y_{i})(I_{y}(x_{i},y_{i}) & \sum_{w} (I_{y}(x_{i},y_{i}))^2  \end{bmatrix}\begin{bmatrix} \delta x \\ \delta y \end{bmatrix} \\
+    &= \begin{bmatrix} \delta x & \delta y \end{bmatrix}\textbf{M}\begin{bmatrix} \delta x \\ \delta y \end{bmatrix}
+\end{align*}
+
+\subsubsection{Structure Tensor}
+
+The square symmetrix matrix M is the called the Structure Tensor or the Second Moment matrix.
+
+\begin{equation}
+    M = \begin{bmatrix} \sum_{w} (I_{x}(x_{i},y_{i}))^2 & \sum_{w} I_{x}(x_{i},y_{i})(I_{y}(x_{i},y_{i}) \\[0.2cm] \sum_{w} I_{x}(x_{i},y_{i})(I_{y}(x_{i},y_{i}) & \sum_{w} (I_{y}(x_{i},y_{i}))^2  \end{bmatrix}
+\end{equation}
+
+\subsubsection{Response Function}
+
+We can compute the eigenvalues directly, or use the corner response function in terms of the determinant and trace of M.
+
+\begin{align}
+    det(M) = M_{00}M_{11} - M_{01}M{10} = M_{00}M_{11}-M_{10}^2 = \lambda_{1}\lambda_{2} \\
+    trace(M) = M_{00}+M_{11} = \lambda_{1}+\lambda_{2} \\
+    R = det(M) - k\times trace(M)^2
+\end{align}
+
+\subsubsection{Application}
+
+We need to differentiate an image, we have the Sobel operator for this. The result from convolution with the x and y template can be used to calculate the structure tensor.
+
+\subsubsection{Multi-Scale}
+
+We define a Gaussian scale space with a fixed \textit{set of scales}, and compute the corner response function at every pixel of each scale, and keep only those with a response above a certain threshold.
+\subsection{Scale}
+
+Scale is a problem in computer vision, since as an object gets closer it gets larger with more detail. If we are using a technique with fixed size processing windows, this is a problem.
+
+\subsubsection{Scale Space Theory}
+Scale space theory is a formal framework for handling the scale problem.
+
+\begin{itemize}
+    \itemsep0em
+    \item The image is represented by a series of increasingly smoothed/blurred images parameterised by a scale parameter t.
+    \item t represents the amount of smoothing
+    \item \textbf{Key Notion: Image structures smaller than $\sqrt{t}$ have been smoothed away at scale t.}
+\end{itemize}
+
+\subsubsection{Gaussian Scale Space}
+Formally, Gaussian scale space is defined by the following equation:
+
+\begin{equation}
+    L(∙,∙;t) = g(∙,∙;t) * f(∙,∙)
+\end{equation}
+
+$∙,∙$ implies that $∙$ represents a variable which the convolution is over.
+
+\noindent $t \geq 0$ and,
+
+\begin{equation}
+    g(x,y;t) = \frac{1}{2\pi t}e^{-\frac{ (x^2 + y^2)}{2t}}
+\end{equation}
+
+$t=\sigma^2$, which means t represents the variance of the Gaussian smoothing filter.
+
+\subsubsection{Nyquist-Shannon Sampling Theorem}
+
+If we filter a signal with a low pass filter that halves the frequency content, you can also half the sampling rate without loss of information.
+
+\begin{quote}
+    \textit{If a function $x(t)$ contains no frequencies higher than B$Hz$, it is completely determined by giving its ordinates at a series of points spaced $\frac{1}{2B}$ seconds apart.}
+\end{quote}
+
+This leads us to the \textbf{Gaussian Pyramid}. Where, every time we double $t$ in the scale space, we can half the image size without a loss of information. This is faster time complexity wise and uses less memory.
+
+\subsection{Blob Detection}
+
+We recall that the \textit{Laplacian of Gaussian} is the second derivative of a Gaussian function. If we find a local minima or maxima, we get a blob detector. \\
+
+
+
+\noindent We can define normalised scale space laplacian of gaussian as:
+
+\begin{equation}
+    \Delta_{norm}^{2}L(x,y;t) = t(L_{xx}+L_{yy})
+\end{equation}
+
+\noindent By finding extrema of this function in scale space, you can find \textit{blobs} at their representative scale ($\sqrt{2t}$
+
+\begin{quote}
+     Very useful property: if a blob is detected at $(x_0, y_0; t_0)$ in an image, then under a scaling of that image by a factor s, the same blob would be detected at ($sx_0, sy_0; s^{2}t_0)$ in the scaled image.
+\end{quote}
+
+\noindent Its computationally expensive to build a laplacian of gaussian scale space. The following approximation can be made, the \textbf{Difference of Gaussians}:
+
+\begin{equation}
+    \Delta_{norm}^2 L(x,y;t) \approx \frac{t}{\Delta t}(L(x,y;t+\Delta t) - L(x,y;t-\Delta t))
+\end{equation}
+
+\noindent The laplacian of gaussian scale space can be built from subtracting adjacent scales of a Gaussian scale space, we can build a difference of gaussian pyramid.
+
+\begin{itemize}
+    \itemsep0em
+    \item An oversampled pyramid as there are multiple images between a doubling of scale.
+    \item Images between a doubling of scale ar an octave.
+\end{itemize}
